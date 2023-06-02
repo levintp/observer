@@ -7,8 +7,8 @@ go_library(
     visibility = ["//visibility:private"],
     deps = [
         "//observer/internal/config",
-        "@com_github_ohler55_ojg//jp:go_default_library",
-        "@com_github_ohler55_ojg//oj:go_default_library",
+        "@com_github_ohler55_ojg//jp",
+        "@com_github_ohler55_ojg//oj",
     ],
 )
 
