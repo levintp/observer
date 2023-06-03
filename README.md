@@ -21,7 +21,7 @@ Scheme legend and generic placeholders are defined as follows:
 arbitrary length.
 - Default values are specified as `... | default = <default_value>`
 - Parameters that contain only optional sub-parameters are also optional and
-can be ommited.
+can be omitted.
 - `<string>`: an arbitrary regular string.
 - `<host>`: a valid string consisting of a hostname of a machine accessible by
 the controller.
