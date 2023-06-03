@@ -8,15 +8,16 @@ import "gopkg.in/yaml.v3"
 type Config struct {
 	// Configuration regarding the controller.
 	ControllerSpec struct {
-		Host string `yaml:"host" env:"OBSERVER_CONTROLLER_HOST" env-default:"localhost"` // Hostname of the controller.
-		Port int    `yaml:"port" env:"OBSERVER_CONTROLLER_PORT" env-default:"1139"`      // Connection port of the controller.
+		Host string `yaml:"host" env:"OBSERVER_CONTROLLER_HOST"`                    // Hostname of the controller.
+		Port int    `yaml:"port" env:"OBSERVER_CONTROLLER_PORT" env-default:"1139"` // Connection port of the controller.
 	} `yaml:"controller"`
 	// Configuration regarding the database.
 	DatabaseSpec struct {
-		Host string `yaml:"host" env:"OBSERVER_DATABASE_HOST" env-default:"localhost"` // Hostname of the database.
-		Port int    `yaml:"port" env:"OBSERVER_DATABASE_PORT" env-default:"9200"`      // Connection port of the database.
-		User string `yaml:"user" env:"OBSERVER_DATABASE_USER" env-required:""`         // Username used to authenticate with the database.
-		Pass string `yaml:"pass" env:"OBSERVER_DATABASE_PASS" env-required:""`         // Password used to authenticate with the database.
+		Host  string `yaml:"host" env:"OBSERVER_DATABASE_HOST"`                                  // Hostname of the database.
+		Port  int    `yaml:"port" env:"OBSERVER_DATABASE_PORT" env-default:"9200"`               // Connection port of the database.
+		User  string `yaml:"user" env:"OBSERVER_DATABASE_USER" env-required:""`                  // Username used to authenticate with the database.
+		Pass  string `yaml:"pass" env:"OBSERVER_DATABASE_PASS" env-required:""`                  // Password used to authenticate with the database.
+		Index string `yaml:"inedx" env:"OBSERVER_DATABASE_INEDX" env-default:"observer-streams"` // The elasticsearch index to write metrics to.
 	} `yaml:"database"`
 	// Configuration regarding the local agent.
 	AgentSpec struct {
@@ -24,8 +25,8 @@ type Config struct {
 	} `yaml:"agent"`
 	// Configuration regarding the API.
 	APISpec struct {
-		Host string `yaml:"host" env:"OBSERVER_API_HOST" env-default:"localhost"` // Hostname of the API.
-		Port int    `yaml:"port" env:"OBSERVER_API_PORT" env-default:"1086"`      // Connection port of the API.
+		Host string `yaml:"host" env:"OBSERVER_API_HOST"`                    // Hostname of the API.
+		Port int    `yaml:"port" env:"OBSERVER_API_PORT" env-default:"1086"` // Connection port of the API.
 	} `yaml:"api"`
 	Streams map[string]*StreamSpec `yaml:"streams"` // List of streams.
 	Nodes   map[string]*NodeSpec   `yaml:"nodes"`   // List of nodes.
