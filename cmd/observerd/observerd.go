@@ -14,7 +14,6 @@ func main() {
 	log.Println(configuration)
 	log.Println("---")
 
-	var data interface{}
 	content := []byte(`
 	[
 		{
@@ -41,7 +40,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Successfully parsed")
 
 	//expr, err := jp.ParseString("[?(@.value > 400)].slot")
 	expr, err := jp.ParseString("[?(@ > 3)]")
