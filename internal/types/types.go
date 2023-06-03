@@ -36,8 +36,9 @@ type Config struct {
 // The `StreamSpec` type is a structure that defines the specification of a
 // stream of metrics.
 type StreamSpec struct {
-	Name    string                 `yaml:"name"`                    // Name of the stream.
-	Metrics map[string]*MetricSpec `yaml:"metrics" env-required:""` // Metrics in the stream.
+	Name       string                 `yaml:"name"`                    // Name of the stream.
+	Categories []string               `yaml:"categories,omitempty"`    // Categories to run the stream on.
+	Metrics    map[string]*MetricSpec `yaml:"metrics" env-required:""` // Metrics in the stream.
 }
 
 // The `MetricSpec` type is a structure that defines the specification of a
@@ -56,10 +57,11 @@ type MetricSpec struct {
 // This threshold represents a barrier to watch for and when its condition is
 // met, it will trigger the execution of a respective module.
 type ThresholdSpec struct {
-	Name     string     `yaml:"name"`                      // Name of the threshold.
-	Expr     string     `yaml:"expression"`                // Threshold as a JSONPath expression.
-	Interval int        `yaml:"interval" env-default:"60"` // Check interval in seconds.
-	Module   ModuleSpec `yaml:"module"`                    // Module used when expression is met.
+	Name       string     `yaml:"name"`                      // Name of the threshold.
+	Expr       string     `yaml:"expression"`                // Threshold as a JSONPath expression.
+	Interval   int        `yaml:"interval" env-default:"60"` // Check interval in seconds.
+	Categories []string   `yaml:"categories,omitempty"`      // Categories to check the threshold on.
+	Module     ModuleSpec `yaml:"module"`                    // Module used when expression is met.
 }
 
 // The `ModuleSpec` type is a structure that defines the specification of a
