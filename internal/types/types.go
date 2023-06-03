@@ -41,10 +41,11 @@ type StreamSpec struct {
 // The `MetricSpec` type is a structure that defines the specification of a
 // collectable metric.
 type MetricSpec struct {
-	Name       string                    `yaml:"name"`                   // Name of the metric.
-	Categories []string                  `yaml:"categories,omitempty"`   // Categories to collect the metric on.
-	Module     ModuleSpec                `yaml:"module" env-required:""` // Collection module.
-	Thresholds map[string]*ThresholdSpec `yaml:"thresholds,omitempty"`   // Thresholds applied to the metric.
+	Name       string                    `yaml:"name"`                      // Name of the metric.
+	Interval   int                       `yaml:"interval" env-default:"60"` // Collection interval.
+	Categories []string                  `yaml:"categories,omitempty"`      // Categories to collect the metric on.
+	Module     ModuleSpec                `yaml:"module" env-required:""`    // Collection module in seconds.
+	Thresholds map[string]*ThresholdSpec `yaml:"thresholds,omitempty"`      // Thresholds applied to the metric.
 }
 
 // The `ThresholdSpec` type is a structure that defines the specification of a
@@ -53,18 +54,18 @@ type MetricSpec struct {
 // This threshold represents a barrier to watch for and when its condition is
 // met, it will trigger the execution of a respective module.
 type ThresholdSpec struct {
-	Name   string     `yaml:"name"`       // Name of the threshold.
-	Expr   string     `yaml:"expression"` // Threshold as a JSONPath expression.
-	Module ModuleSpec `yaml:"module"`     // Module used when expression is met.
+	Name     string     `yaml:"name"`                      // Name of the threshold.
+	Expr     string     `yaml:"expression"`                // Threshold as a JSONPath expression.
+	Interval int        `yaml:"interval" env-default:"60"` // Check interval in seconds.
+	Module   ModuleSpec `yaml:"module"`                    // Module used when expression is met.
 }
 
 // The `ModuleSpec` type is a structure that defines the specification of a
 // module.
 type ModuleSpec struct {
-	Name      string                 `yaml:"name"`                      // Name of the module.
-	Interval  int                    `yaml:"interval" env-default:"60"` // Execution interval.
-	Timeout   int                    `yaml:"timeout" env-default:"59"`  // Maximum execution time.
-	Arguments map[string]interface{} `yaml:"arguments,omitempty"`       // Arguments to pass to the module.
+	Name      string                 `yaml:"name"`                     // Name of the module.
+	Timeout   int                    `yaml:"timeout" env-default:"59"` // Maximum execution time.
+	Arguments map[string]interface{} `yaml:"arguments,omitempty"`      // Arguments to pass to the module.
 }
 
 // The `NodeSpec` type is a structure that definse a monitored node in the

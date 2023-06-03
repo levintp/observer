@@ -11,7 +11,7 @@ import (
 
 func main() {
 	configuration := config.Get()
-	log.Printf("Configuration:\n%+v\n", configuration)
+	log.Println(configuration)
 	log.Println("---")
 
 	var data interface{}
