@@ -8,25 +8,25 @@ import "gopkg.in/yaml.v3"
 type Config struct {
 	// Configuration regarding the controller.
 	ControllerConfig struct {
-		Host string `yaml:"host,omitempty" env:"OBSERVER_CONTROLLER_HOST" env-default:"localhost"` // Hostname of the controller.
-		Port int    `yaml:"port,omitempty" env:"OBSERVER_CONTROLLER_PORT" env-default:"1139"`      // Connection port of the controller.
-	} `yaml:"controller,omitempty"`
+		Host string `yaml:"host" env:"OBSERVER_CONTROLLER_HOST" env-default:"localhost"` // Hostname of the controller.
+		Port int    `yaml:"port" env:"OBSERVER_CONTROLLER_PORT" env-default:"1139"`      // Connection port of the controller.
+	} `yaml:"controller"`
 	// Configuration regarding the database.
 	DatabaseConfig struct {
-		Host string `yaml:"host,omitempty" env:"OBSERVER_DATABASE_HOST" env-default:"localhost"` // Hostname of the database.
-		Port int    `yaml:"port,omitempty" env:"OBSERVER_DATABASE_PORT" env-default:"9200"`      // Connection port of the database.
-		User string `yaml:"user" env:"OBSERVER_DATABASE_USER" env-required:""`                   // Username used to authenticate with the database.
-		Pass string `yaml:"pass" env:"OBSERVER_DATABASE_PASS" env-required:""`                   // Password used to authenticate with the database.
-	} `yaml:"database,omitempty"`
+		Host string `yaml:"host" env:"OBSERVER_DATABASE_HOST" env-default:"localhost"` // Hostname of the database.
+		Port int    `yaml:"port" env:"OBSERVER_DATABASE_PORT" env-default:"9200"`      // Connection port of the database.
+		User string `yaml:"user" env:"OBSERVER_DATABASE_USER" env-required:""`         // Username used to authenticate with the database.
+		Pass string `yaml:"pass" env:"OBSERVER_DATABASE_PASS" env-required:""`         // Password used to authenticate with the database.
+	} `yaml:"database"`
 	// Configuration regarding the local agent.
 	AgentConfig struct {
-		Port int `yaml:"port,omitempty" env:"OBSERVER_AGENT_PORT" env-default:"1016"` // Connection port to the agent.
-	} `yaml:"agent,omitempty"`
+		Port int `yaml:"port" env:"OBSERVER_AGENT_PORT" env-default:"1016"` // Connection port to the agent.
+	} `yaml:"agent"`
 	// Configuration regarding the API.
 	APIConfig struct {
-		Host string `yaml:"host,omitempty" env:"OBSERVER_API_HOST" env-default:"localhost"` // Hostname of the API.
-		Port int    `yaml:"port,omitempty" env:"OBSERVER_API_PORT" env-default:"1086"`      // Connection port of the API.
-	} `yaml:"api,omitempty"`
+		Host string `yaml:"host" env:"OBSERVER_API_HOST" env-default:"localhost"` // Hostname of the API.
+		Port int    `yaml:"port" env:"OBSERVER_API_PORT" env-default:"1086"`      // Connection port of the API.
+	} `yaml:"api"`
 	Streams map[string]*StreamSpec `yaml:"streams"` // List of streams.
 	Nodes   map[string]NodeSpec    `yaml:"nodes"`   // List of nodes.
 }
@@ -74,6 +74,8 @@ type NodeSpec struct {
 	Categories []string `yaml:"categories,omitempty"` // Categories the node is a part of.
 }
 
+// Function to convert the `Config` type into a printable, human-readable
+// string by marshaling it back to the configuration file format.
 func (config Config) String() string {
 	str, _ := yaml.Marshal(config)
 	return string(str)
