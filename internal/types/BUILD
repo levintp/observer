@@ -5,4 +5,5 @@ go_library(
     srcs = ["types.go"],
     importpath = "github.com/levintp/observer/internal/types",
     visibility = ["//observer:__subpackages__"],
+    deps = ["@in_gopkg_yaml_v3//:yaml_v3"],
 )

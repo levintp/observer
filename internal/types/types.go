@@ -2,35 +2,79 @@
 // represent data and objects throughout the system.
 package types
 
-// The `Metric` type is a structure that defines a collectable metric.
-type Metric struct {
-	Name       string      `toml:"name"`                   // Name of the metric.
-	Interval   string      `toml:"interval" default:"60s"` // Collection interval.
-	Timeout    string      `toml:"timeout" default:"59s"`  // Maximum collection time.
-	Categories []string    `toml:"categories"`             // Categories to collect the metric on.
-	Module     string      `toml:"module"`                 // Collection module.
-	Args       ModuleArgs  `toml:"arguments"`              // Arguments to the module.
-	Thresholds []Threshold `toml:"threshold"`              // Thresholds applied to the metric.
+import "gopkg.in/yaml.v3"
+
+// Struct to contain the configuration of the observer system.
+type Config struct {
+	// Configuration regarding the controller.
+	ControllerConfig struct {
+		Host string `yaml:"host,omitempty" env:"OBSERVER_CONTROLLER_HOST" env-default:"localhost"` // Hostname of the controller.
+		Port int    `yaml:"port,omitempty" env:"OBSERVER_CONTROLLER_PORT" env-default:"1139"`      // Connection port of the controller.
+	} `yaml:"controller,omitempty"`
+	// Configuration regarding the database.
+	DatabaseConfig struct {
+		Host string `yaml:"host,omitempty" env:"OBSERVER_DATABASE_HOST" env-default:"localhost"` // Hostname of the database.
+		Port int    `yaml:"port,omitempty" env:"OBSERVER_DATABASE_PORT" env-default:"9200"`      // Connection port of the database.
+		User string `yaml:"user" env:"OBSERVER_DATABASE_USER" env-required:""`                   // Username used to authenticate with the database.
+		Pass string `yaml:"pass" env:"OBSERVER_DATABASE_PASS" env-required:""`                   // Password used to authenticate with the database.
+	} `yaml:"database,omitempty"`
+	// Configuration regarding the local agent.
+	AgentConfig struct {
+		Port int `yaml:"port,omitempty" env:"OBSERVER_AGENT_PORT" env-default:"1016"` // Connection port to the agent.
+	} `yaml:"agent,omitempty"`
+	// Configuration regarding the API.
+	APIConfig struct {
+		Host string `yaml:"host,omitempty" env:"OBSERVER_API_HOST" env-default:"localhost"` // Hostname of the API.
+		Port int    `yaml:"port,omitempty" env:"OBSERVER_API_PORT" env-default:"1086"`      // Connection port of the API.
+	} `yaml:"api,omitempty"`
+	Streams map[string]*StreamSpec `yaml:"streams"` // List of streams.
+	Nodes   map[string]NodeSpec    `yaml:"nodes"`   // List of nodes.
 }
 
-// The `Threshold` type is a structure that defines a threshold on the
-// collected value of a metric.
+// The `StreamSpec` type is a structure that defines the specification of a
+// stream of metrics.
+type StreamSpec struct {
+	Name    string                 `yaml:"name"`                    // Name of the stream.
+	Metrics map[string]*MetricSpec `yaml:"metrics" env-required:""` // Metrics in the stream.
+}
+
+// The `MetricSpec` type is a structure that defines the specification of a
+// collectable metric.
+type MetricSpec struct {
+	Name       string                    `yaml:"name"`                   // Name of the metric.
+	Categories []string                  `yaml:"categories,omitempty"`   // Categories to collect the metric on.
+	Module     ModuleSpec                `yaml:"module" env-required:""` // Collection module.
+	Thresholds map[string]*ThresholdSpec `yaml:"thresholds,omitempty"`   // Thresholds applied to the metric.
+}
+
+// The `ThresholdSpec` type is a structure that defines the specification of a
+// threshold on the collected value of a metric.
 //
 // This threshold represents a barrier to watch for and when its condition is
-// met, it will trigger the execution of a response module.
-type Threshold struct {
-	Expr   string     `toml:"expression"` // Threshold as a JSONPath expression.
-	Module string     `toml:"module"`     // Module used when expression is met.
-	Args   ModuleArgs `toml:"arguments"`  // Arguments to the module.
+// met, it will trigger the execution of a respective module.
+type ThresholdSpec struct {
+	Name   string     `yaml:"name"`       // Name of the threshold.
+	Expr   string     `yaml:"expression"` // Threshold as a JSONPath expression.
+	Module ModuleSpec `yaml:"module"`     // Module used when expression is met.
 }
 
-// The `Node` type is a structure that definse a monitored node in the
+// The `ModuleSpec` type is a structure that defines the specification of a
+// module.
+type ModuleSpec struct {
+	Name      string                 `yaml:"name"`                      // Name of the module.
+	Interval  int                    `yaml:"interval" env-default:"60"` // Execution interval.
+	Timeout   int                    `yaml:"timeout" env-default:"59"`  // Maximum execution time.
+	Arguments map[string]interface{} `yaml:"arguments,omitempty"`       // Arguments to pass to the module.
+}
+
+// The `NodeSpec` type is a structure that definse a monitored node in the
 // cluster.
-type Node struct {
-	Name       string   `toml:"name"`       // Hostname of the node.
-	Categories []string `toml:"categories"` // Categories the node is a part of.
+type NodeSpec struct {
+	Name       string   `yaml:"name"`                 // Hostname of the node.
+	Categories []string `yaml:"categories,omitempty"` // Categories the node is a part of.
 }
 
-// The `ModuleArgs` types is a list of arguments passed to a module when
-// executed.
-type ModuleArgs []any
+func (config Config) String() string {
+	str, _ := yaml.Marshal(config)
+	return string(str)
+}

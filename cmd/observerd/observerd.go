@@ -10,8 +10,8 @@ import (
 )
 
 func main() {
-	configuration := config.Get("/etc/observer/observer.toml")
-	log.Printf("Configuration: %+v\n", configuration)
+	configuration := config.Get()
+	log.Printf("Configuration:\n%+v\n", configuration)
 	log.Println("---")
 
 	var data interface{}
@@ -35,6 +35,7 @@ func main() {
 		}
 	]
 	`)
+	content = []byte(`{"value": 4}`)
 
 	data, err := oj.Parse(content)
 	if err != nil {
@@ -42,7 +43,8 @@ func main() {
 	}
 	log.Println("Successfully parsed")
 
-	expr, err := jp.ParseString("[?(@.value > 400)].slot")
+	//expr, err := jp.ParseString("[?(@.value > 400)].slot")
+	expr, err := jp.ParseString("[?(@ > 3)]")
 	if err != nil {
 		log.Fatal(err)
 	}

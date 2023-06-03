@@ -7,6 +7,7 @@ go_library(
     visibility = ["//observer:__subpackages__"],
     deps = [
         "//observer/internal/types",
-        "@com_github_pelletier_go_toml//:go-toml",
+        "@com_github_ilyakaznacheev_cleanenv//:cleanenv",
+        "@in_gopkg_yaml_v3//:yaml_v3",
     ],
 )

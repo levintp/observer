@@ -6,52 +6,58 @@ import (
 	"log"
 	"os"
 
-	"github.com/pelletier/go-toml"
+	"gopkg.in/yaml.v3"
 
+	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/levintp/observer/internal/types"
 )
 
-// Struct to contain the configuration of the observer system.
-type Config struct {
-	ControllerInfo controllerInfo `toml:"controller"` // Information about the controller.
-	DatabaseInfo   databaseInfo   `toml:"database"`   // Information about the database.
-	AgentInfo      agentInfo      `toml:"agent"`      // Information about the agent.
-	ApiInfo        apiInfo        `toml:"api"`        // Information about the API.
-	Metrics        []types.Metric `toml:"metric"`     // List of metrics.
-	Nodes          []types.Node   `toml:"node"`       // List of nodes.
-}
+var globalConfiguration *types.Config // Global singleton configuration.
 
-type controllerInfo struct {
-	Host string `toml:"host" default:"localhost"` // Hostname of the controller.
-	Port int    `toml:"port" default:"6710"`      // Connection port of the controller.
-}
-
-type databaseInfo struct {
-	Host string `toml:"host" default:"localhost"` // Hostname of the database.
-	Port int    `toml:"port" default:"9200"`      // Connection port of the database.
-	User string `toml:"user"`                     // Username used to authenticate with the database.
-	Pass string `toml:"pass"`                     // Password used to authenticate with the database.
-}
-
-type agentInfo struct {
-	Port int `toml:"port" default:"6711"` // Connection port to the agent
-}
-
-type apiInfo struct {
-	Host string `toml:"host" default:"localhost"` // Hostname of the REST API.
-	Port int    `toml:"port" default:"6712"`      // Connection port of the REST API.
-}
-
-func Get(configPath string) Config {
-	content, err := os.ReadFile(configPath)
-	if err != nil {
-		log.Fatal(err)
+// Function to get the configuration.
+func Get() *types.Config {
+	if globalConfiguration == nil {
+		log.Println("Building new configuration")
+		globalConfiguration = buildConfiguration()
 	}
 
-	var config Config
-	if err := toml.Unmarshal(content, &config); err != nil {
-		log.Fatal(err)
+	return globalConfiguration
+}
+
+// Function to read the configuration from the configuration file.
+func readFile(configPath string) types.Config {
+	content, err := os.ReadFile(configPath)
+	if err != nil {
+		log.Fatalf("Failed to read configuration file: %e", err)
+	}
+
+	var config types.Config
+	if err := yaml.Unmarshal(content, &config); err != nil {
+		log.Fatalf("Failed to parse configuration file: %e", err)
 	}
 
 	return config
+}
+
+// Function to build a new global configuration.
+func buildConfiguration() *types.Config {
+	var c types.Config
+	err := cleanenv.ReadConfig("/etc/observer/observer.yaml", &c)
+	if err != nil {
+		log.Fatalf("Failed to parse configuration: %e", err)
+	}
+
+	// c = readFile("/etc/observer/observer.yaml")
+	for streamName, stream := range c.Streams {
+		stream.Name = streamName
+		for metricName, metric := range stream.Metrics {
+			metric.Name = metricName
+			if metric.Thresholds != nil {
+				for thresholdName, threshold := range metric.Thresholds {
+					threshold.Name = thresholdName
+				}
+			}
+		}
+	}
+	return &c
 }
