@@ -48,7 +48,7 @@ setting.
 - `INHERIT`: magic value that is defined as the inheritted value of the same
 option as is set on the parent item.
 
-Any other placeholder is specified separately.
+Any other placeholder is defined separately.
 
 The scheme of the configuration file is as follows:
 
@@ -100,7 +100,7 @@ host: <host>
 
 A `database_spec` section specifies a set of configuration options regarding
 the elasticsearch database that the system depends on, specifically
-connection settings and indices use by the Observer system.
+connection settings and indices dedicated to the Observer system.
 
 ```yaml
 # The hostname of the database.
@@ -114,7 +114,7 @@ user: <string>
  
 # The password used to authenticate with the database.
 # Note: Writing passwords in plaintext in configuration files is not secure.
-#       Using the environment variable for this setting is advised.
+#       Using the environment variable for this setting is preferable.
 pass: <string>
 
 # The elasticsearch index to write metrics data to.
@@ -136,11 +136,11 @@ local agent on each node, specifically connection settings.
 An `api_spec` section specifies a set of configuration options regarding the
 REST API, specifically connection settings.
 
-Note: The REST API component has 2 endpoints:
+Note: Unlike most other components, the REST API component has 2 endpoints:
 - The RPC endpoint, defined by the `port` option, serves as an internal
-endpoint for communication between components of the system.
-- The REST API endpoint, defiend by the `rest_port` option, serves as as an
-exported API for users to control and query the system.
+endpoint for communication between components of the Observer system.
+- The REST API endpoint, defined by the `rest_port` option, serves as as an
+exported API for users to control and query the Observer system.
 
 ```yaml
 # The hostname of the REST API instance.
@@ -193,6 +193,8 @@ a metric in a stream.
 [ interval: <duration> | default = 60 ]
 
 # The node categories that are required to collect the metric.
+# Note: Each category that is specified in this option MUST match exaclty one
+#       category as defined in the root `categories` field.
 categories:
   [ - <category> ... | default = INHERIT ]
 
@@ -215,6 +217,8 @@ defines a threshold on a metric.
 [ interval: <duration> | default = 60 ]
 
 # The node categories that are required to check the threshold.
+# Note: Each category that is specified in this option MUST match exaclty one
+#       category as defined in the root `categories` field.
 categories:
   [ - <category> ... | default = INHERIT ]
 
@@ -239,7 +243,7 @@ name: <modulename>
 
 # The timeout duration of the module execution. After this amount of time the
 # execution of the module will halt and will be declared as failed.
-[ timeout: <duration> | default = 59]
+[ timeout: <duration> | default = 1]
 
 # The arguments given to the module.
 arguments:
