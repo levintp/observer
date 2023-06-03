@@ -25,8 +25,9 @@ type Config struct {
 	} `yaml:"agent"`
 	// Configuration regarding the API.
 	APISpec struct {
-		Host string `yaml:"host" env:"OBSERVER_API_HOST" env-required:""`    // Hostname of the API.
-		Port int    `yaml:"port" env:"OBSERVER_API_PORT" env-default:"1086"` // Connection port of the API.
+		Host     string `yaml:"host" env:"OBSERVER_API_HOST" env-required:""`              // Hostname of the API.
+		Port     int    `yaml:"port" env:"OBSERVER_API_PORT" env-default:"1086"`           // RPC port of the API.
+		RestPort int    `yaml:"rest_port" env:"OBSERVER_API_REST_PORT" env-default:"1291"` // REST port of the API.
 	} `yaml:"api"`
 	Streams map[string]*StreamSpec `yaml:"streams"` // List of streams.
 	Nodes   map[string]*NodeSpec   `yaml:"nodes"`   // List of nodes.
