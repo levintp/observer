@@ -41,6 +41,9 @@ func buildConfiguration() *types.Config {
 			}
 		}
 	}
+	for nodeName, node := range c.Nodes {
+		node.Name = nodeName
+	}
 
 	return &c
 }

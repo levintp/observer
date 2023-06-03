@@ -28,7 +28,7 @@ type Config struct {
 		Port int    `yaml:"port" env:"OBSERVER_API_PORT" env-default:"1086"`      // Connection port of the API.
 	} `yaml:"api"`
 	Streams map[string]*StreamSpec `yaml:"streams"` // List of streams.
-	Nodes   map[string]NodeSpec    `yaml:"nodes"`   // List of nodes.
+	Nodes   map[string]*NodeSpec   `yaml:"nodes"`   // List of nodes.
 }
 
 // The `StreamSpec` type is a structure that defines the specification of a
