@@ -23,14 +23,30 @@ func Get() *types.Config {
 
 // Function to build a new global configuration.
 func buildConfiguration() *types.Config {
-	var c types.Config
-	err := cleanenv.ReadConfig("/etc/observer/observer.yaml", &c)
+	var conf types.Config
+
+	// Read configuration from disk.
+	err := cleanenv.ReadConfig("/etc/observer/observer.yaml", &conf)
 	if err != nil {
 		log.Fatalf("Failed to parse configuration: %e", err)
 	}
 
-	// Update mapped structures with keys as names.
-	for streamName, stream := range c.Streams {
+	// Process configuration.
+	updateConfigurationNames(&conf)
+
+	// Validate post-processed configuration.
+	err = validateConfiguration(conf)
+	if err != nil {
+		log.Fatalf("Invalid configuration: %e", err)
+	}
+
+	return &conf
+}
+
+// Function to update names of mapped structures in the configuration.
+func updateConfigurationNames(conf *types.Config) {
+	// Iterate over stream configuration and update mapped names.
+	for streamName, stream := range conf.Streams {
 		stream.Name = streamName
 		for metricName, metric := range stream.Metrics {
 			metric.Name = metricName
@@ -41,9 +57,13 @@ func buildConfiguration() *types.Config {
 			}
 		}
 	}
-	for nodeName, node := range c.Nodes {
+
+	// Iterate over node configuration an update mapped names.
+	for nodeName, node := range conf.Nodes {
 		node.Name = nodeName
 	}
+}
 
-	return &c
+func validateConfiguration(conf types.Config) error {
+	return nil
 }
