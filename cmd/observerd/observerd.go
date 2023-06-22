@@ -11,7 +11,7 @@ import (
 
 func main() {
 	configuration := config.Get()
-	log.Println(configuration)
+	log.Printf("Configuration:\n\n%v\n", configuration)
 	log.Println("---")
 
 	content := []byte(`
