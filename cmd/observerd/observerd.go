@@ -1,12 +1,22 @@
 package main
 
 import (
+	"github.com/levintp/observer/internal/common"
 	"github.com/levintp/observer/internal/config"
-	"github.com/levintp/observer/internal/logging"
+	log "github.com/sirupsen/logrus"
 )
 
-func main() {
-	logging.Init()
+func init() {
+	common.InitLogger()
 	configuration := config.Get()
-	logging.Logger.Infof("Configuration:\n\n%v\n", configuration)
+	if err := common.ConfigureLogger(configuration.AgentSpec.LogFile, configuration.AgentSpec.LogLevel); err != nil {
+		log.Fatalf("Failed to configure logger: %v", err)
+	}
+}
+
+func main() {
+	log.Info("Observer started")
+
+	configuration := config.Get()
+	log.Infof("Loaded configuration:\n%v", configuration)
 }

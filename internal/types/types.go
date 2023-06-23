@@ -9,26 +9,34 @@ type Config struct {
 	ConfigFile string `yaml:"config_file" env:"OBSERVER_CONFIG_FILE" default:"/etc/observer/observer.yaml"`
 	// Configuration regarding the controller.
 	ControllerSpec struct {
-		Host string `yaml:"host" env:"OBSERVER_CONTROLLER_HOST"`                // Hostname of the controller.
-		Port int    `yaml:"port" env:"OBSERVER_CONTROLLER_PORT" default:"1139"` // Connection port of the controller.
+		Host     string `yaml:"host" env:"OBSERVER_CONTROLLER_HOST"`                                                      // Hostname of the controller.
+		Port     int    `yaml:"port" env:"OBSERVER_CONTROLLER_PORT" default:"1139"`                                       // Connection port of the controller.
+		LogFile  string `yaml:"log_file" env:"OBSERVER_CONTROLLER_LOG_FILE" default:"/var/log/observer/observerctld.log"` // Output file of the controller log.
+		LogLevel string `yaml:"log_level" env:"OBSERVER_CONTROLLER_LOG_LEVEL" default:"info"`                             // Level of the controller log.
 	} `yaml:"controller"`
 	// Configuration regarding the database.
 	DatabaseSpec struct {
-		Host  string `yaml:"host" env:"OBSERVER_DATABASE_HOST"`                              // Hostname of the database.
-		Port  int    `yaml:"port" env:"OBSERVER_DATABASE_PORT" default:"9200"`               // Connection port of the database.
-		User  string `yaml:"user" env:"OBSERVER_DATABASE_USER"`                              // Username used to authenticate with the database.
-		Pass  string `yaml:"pass" env:"OBSERVER_DATABASE_PASS"`                              // Password used to authenticate with the database.
-		Index string `yaml:"index" env:"OBSERVER_DATABASE_INEDX" default:"observer-streams"` // The elasticsearch index to write metrics to.
+		Host     string `yaml:"host" env:"OBSERVER_DATABASE_HOST"`                                                     // Hostname of the database.
+		Port     int    `yaml:"port" env:"OBSERVER_DATABASE_PORT" default:"9200"`                                      // Connection port of the database.
+		User     string `yaml:"user" env:"OBSERVER_DATABASE_USER"`                                                     // Username used to authenticate with the database.
+		Pass     string `yaml:"pass" env:"OBSERVER_DATABASE_PASS"`                                                     // Password used to authenticate with the database.
+		Index    string `yaml:"index" env:"OBSERVER_DATABASE_INEDX" default:"observer-streams"`                        // The elasticsearch index to write metrics to.
+		LogFile  string `yaml:"log_file" env:"OBSERVER_DATABASE_LOG_FILE" default:"/var/log/observer/observerdbd.log"` // Output file of the database log.
+		LogLevel string `yaml:"log_level" env:"OBSERVER_DATABASE_LOG_LEVEL" default:"info"`                            // Level of the database log.
 	} `yaml:"database"`
 	// Configuration regarding the local agent.
 	AgentSpec struct {
-		Port int `yaml:"port" env:"OBSERVER_AGENT_PORT" default:"1016"` // Connection port to the agent.
+		Port     int    `yaml:"port" env:"OBSERVER_AGENT_PORT" default:"1016"`                                         // Connection port to the agent.
+		LogFile  string `yaml:"log_file" env:"OBSERVER_DATABASE_AGENT_FILE" default:"/var/log/observer/observerd.log"` // Output file of the agent log.
+		LogLevel string `yaml:"log_level" env:"OBSERVER_DATABASE_AGENT_LEVEL" default:"info"`                          // Level of the agent log.
 	} `yaml:"agent"`
 	// Configuration regarding the API.
 	APISpec struct {
-		Host     string `yaml:"host" env:"OBSERVER_API_HOST"`                          // Hostname of the API.
-		Port     int    `yaml:"port" env:"OBSERVER_API_PORT" default:"1086"`           // RPC port of the API.
-		RestPort int    `yaml:"rest_port" env:"OBSERVER_API_REST_PORT" default:"1291"` // REST port of the API.
+		Host     string `yaml:"host" env:"OBSERVER_API_HOST"`                                                           // Hostname of the API.
+		Port     int    `yaml:"port" env:"OBSERVER_API_PORT" default:"1086"`                                            // RPC port of the API.
+		RestPort int    `yaml:"rest_port" env:"OBSERVER_API_REST_PORT" default:"1291"`                                  // REST port of the API.
+		LogFile  string `yaml:"log_file" env:"OBSERVER_DATABASE_API_FILE" default:"/var/log/observer/observerapid.log"` // Output file of the API log.
+		LogLevel string `yaml:"log_level" env:"OBSERVER_DATABASE_API_LEVEL" default:"info"`                             // Level of the API log.
 	} `yaml:"api"`
 	Streams map[string]*StreamSpec `yaml:"streams"` // List of streams.
 	Nodes   map[string]*NodeSpec   `yaml:"nodes"`   // List of nodes.

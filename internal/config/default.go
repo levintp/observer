@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/levintp/observer/internal/logging"
+	log "github.com/sirupsen/logrus"
 )
 
 // Function to set the default values of all fields in a structure, recursively.
@@ -20,7 +20,7 @@ func setDefaults(obj any) error {
 	objType := objValue.Type()
 	objKind := objType.Kind()
 
-	logging.Logger.Tracef("Enumerating object type=%v kind=%v", objType.Name(), objKind)
+	log.Tracef("Enumerating object type=%v kind=%v", objType.Name(), objKind)
 
 	switch objKind {
 	case reflect.Struct:
@@ -29,7 +29,7 @@ func setDefaults(obj any) error {
 			fieldType := objType.Field(i)
 			fieldKind := fieldType.Type.Kind()
 
-			logging.Logger.Tracef("Processing field=%v type=%v", fieldType.Name, fieldKind)
+			log.Tracef("Processing field=%v type=%v", fieldType.Name, fieldKind)
 
 			// If the current field has a `default` tag, use it as default value.
 			if defaultVal := fieldType.Tag.Get("default"); defaultVal != "" {
@@ -41,11 +41,11 @@ func setDefaults(obj any) error {
 				}
 			}
 			if fieldKind == reflect.Struct || fieldKind == reflect.Map {
-				logging.Logger.Tracef("Descending into field=%v kind=%v", fieldType.Name, fieldKind)
+				log.Tracef("Descending into field=%v kind=%v", fieldType.Name, fieldKind)
 				if err := setDefaults(fieldValue.Addr().Interface()); err != nil {
 					return err
 				}
-				logging.Logger.Tracef("Ascending from field=%v", fieldType.Name)
+				log.Tracef("Ascending from field=%v", fieldType.Name)
 			}
 		}
 	case reflect.Map:
