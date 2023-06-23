@@ -15,7 +15,7 @@ func init() {
 }
 
 func main() {
-	log.Info("Observer started")
+	log.Info("Observer Agent daemon started")
 
 	configuration := config.Get()
 	log.Infof("Loaded configuration:\n%v", configuration)

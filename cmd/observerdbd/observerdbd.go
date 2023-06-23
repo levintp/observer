@@ -9,13 +9,13 @@ import (
 func init() {
 	common.InitLogger()
 	configuration := config.Get()
-	if err := common.ConfigureLogger(configuration.ControllerSpec.LogFile, configuration.ControllerSpec.LogLevel); err != nil {
+	if err := common.ConfigureLogger(configuration.DatabaseSpec.LogFile, configuration.DatabaseSpec.LogLevel); err != nil {
 		log.Fatalf("Failed to configure logger: %v", err)
 	}
 }
 
 func main() {
-	log.Info("Observer Controller daemon started")
+	log.Info("Observer Database daemon started")
 
 	configuration := config.Get()
 	log.Infof("Loaded configuration:\n%v", configuration)
