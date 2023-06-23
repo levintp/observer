@@ -3,10 +3,7 @@
 package config
 
 import (
-	"fmt"
 	"log"
-	"reflect"
-	"strconv"
 
 	"github.com/levintp/observer/internal/types"
 )
@@ -27,29 +24,40 @@ func Get() *types.Config {
 func buildConfiguration() *types.Config {
 	var conf types.Config
 
-	// Generate default configuration.
-	err := getDefault(&conf)
+	// Generate minimal default configuration.
+	log.Println("Generating default minimal configuration")
+	err := setDefaults(&conf)
 	if err != nil {
 		log.Fatalf("Failed to generate default configuration: %e", err)
 	}
 
 	// Read the configuration from commandline interface.
-	// err = getConfigurationCli(&conf)
-	// if err != nil {
-	// 	log.Fatalf("Failed to read configuration flags: %e", err)
-	// }
+	log.Println("Reading configuration from the commandline interface")
+	err = getConfigurationCli(&conf)
+	if err != nil {
+		log.Fatalf("Failed to read configuration flags: %e", err)
+	}
 
-	// // Read the configuration from environment.
-	// err = getConfigurationEnv(&conf)
-	// if err != nil {
-	// 	log.Fatalf("Failed to read configuration environment: %e", err)
-	// }
+	// Read the configuration from environment.
+	log.Println("Reading configuration from the environment")
+	err = getConfigurationEnv(&conf)
+	if err != nil {
+		log.Fatalf("Failed to read configuration environment: %e", err)
+	}
 
-	// // Read configuration from file.
-	// err = getConfigurationFile(conf.ConfigFile, &conf)
-	// if err != nil {
-	// 	log.Fatalf("Failed to read configuration file: %e", err)
-	// }
+	// Read configuration from file.
+	log.Println("Reading configuration from the configuration file")
+	err = getConfigurationFile(conf.ConfigFile, &conf)
+	if err != nil {
+		log.Fatalf("Failed to read configuration file: %e", err)
+	}
+
+	// Fill empty fields with default values after configuration expansion.
+	log.Println("Filling empty configuration fields with default values")
+	err = setDefaults(&conf)
+	if err != nil {
+		log.Fatalf("Failed to fill defaults in configuration: %e", err)
+	}
 
 	// Process configuration.
 	updateNames(&conf)
@@ -61,59 +69,6 @@ func buildConfiguration() *types.Config {
 	}
 
 	return &conf
-}
-
-// Function to generate a default configuration and populate it into the configuration structure.
-func getDefault(conf *types.Config) error {
-	*conf = types.Config{}
-
-	return setStructDefaults(conf)
-}
-
-// Function to set default values of all fields of a struct, recursively.
-func setStructDefaults(ptr any) error {
-	if reflect.TypeOf(ptr).Kind() != reflect.Ptr {
-		return fmt.Errorf("Not a pointer")
-	}
-
-	structValue := reflect.ValueOf(ptr).Elem()
-	structType := structValue.Type()
-
-	for i := 0; i < structType.NumField(); i++ {
-		fieldValue := structValue.Field(i)
-		fieldType := structType.Field(i)
-		if fieldType.Type.Kind() == reflect.Struct {
-			if err := setStructDefaults(fieldValue.Addr().Interface()); err != nil {
-				return err
-			}
-		}
-		if defaultVal := fieldType.Tag.Get("default"); defaultVal != "-" {
-			if err := setField(fieldValue, defaultVal); err != nil {
-				return err
-			}
-
-		}
-	}
-	return nil
-}
-
-func setField(field reflect.Value, defaultVal string) error {
-
-	if !field.CanSet() {
-		return fmt.Errorf("Can't set value\n")
-	}
-
-	switch field.Kind() {
-
-	case reflect.Int:
-		if val, err := strconv.ParseInt(defaultVal, 10, 64); err == nil {
-			field.Set(reflect.ValueOf(int(val)).Convert(field.Type()))
-		}
-	case reflect.String:
-		field.Set(reflect.ValueOf(defaultVal).Convert(field.Type()))
-	}
-
-	return nil
 }
 
 // Function to update names of mapped structures in the configuration.
