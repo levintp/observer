@@ -4,9 +4,12 @@ package config
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/levintp/observer/internal/common"
 	"github.com/levintp/observer/internal/types"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
 
 var globalConfiguration *types.Config // Global singleton configuration.
@@ -26,30 +29,29 @@ func Get() *types.Config {
 
 // Function to build a new global configuration.
 func buildConfiguration(conf *types.Config) error {
-
 	// Generate minimal default configuration.
-	if err := setDefaults(conf); err != nil {
+	if err := common.SetDefaults(conf); err != nil {
 		return fmt.Errorf("default: %v", err)
 	}
 
-	// Read the configuration from commandline interface.
-	if err := getConfigurationCli(conf); err != nil {
-		return fmt.Errorf("commandline: %v", err)
-	}
-
-	// Read the configuration from environment.
-	if err := getConfigurationEnv(conf); err != nil {
-		return fmt.Errorf("environment: %v", err)
-	}
-
 	// Read configuration from file.
-	err := getConfigurationFile(conf.ConfigFile, conf)
+	err := readConfigurationFile(getConfigurationFile(), conf)
 	if err != nil {
 		return fmt.Errorf("file: %v", err)
 	}
 
+	// Override configuration with higher priority values from enviroment.
+	if err := common.SetEnvironment(conf, "OBSERVER_"); err != nil {
+		return fmt.Errorf("environment: %v", err)
+	}
+
+	// Override configuration with highest priority values from flags.
+	if err := common.SetFlags(conf); err != nil {
+		return fmt.Errorf("commandline: %v", err)
+	}
+
 	// Fill empty fields with default values after configuration expansion.
-	if err := setDefaults(conf); err != nil {
+	if err := common.SetDefaults(conf); err != nil {
 		return fmt.Errorf("post-process: %v", err)
 	}
 
@@ -86,4 +88,38 @@ func updateNames(conf *types.Config) {
 // Function to validate the parsed configuration.
 func validateConfiguration(conf *types.Config) error {
 	return nil
+}
+
+// Function to get the configuration from the configuration file.
+func readConfigurationFile(filename string, conf *types.Config) error {
+	log.Debugf("Reading configuration from %s", filename)
+
+	// Read the configuration file.
+	content, err := os.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+
+	// Parse the configuration file.
+	err = yaml.Unmarshal(content, conf)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Function to get the configuration filename from either environment or flags, or default.
+func getConfigurationFile() string {
+	filename := "/etc/observer/observer.yaml"
+
+	if environFilename := os.Getenv("OBSERVER_CONFIG_FILE"); environFilename != "" {
+		filename = environFilename
+	}
+
+	if flagFilename := common.GetFlag("config-file"); flagFilename != "" {
+		filename = flagFilename
+	}
+
+	return filename
 }
