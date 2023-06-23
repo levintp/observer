@@ -3,8 +3,9 @@
 package config
 
 import (
-	"log"
+	"fmt"
 
+	"github.com/levintp/observer/internal/logging"
 	"github.com/levintp/observer/internal/types"
 )
 
@@ -13,62 +14,64 @@ var globalConfiguration *types.Config // Global singleton configuration.
 // Function to get the configuration.
 func Get() *types.Config {
 	if globalConfiguration == nil {
-		log.Println("Building new configuration")
-		globalConfiguration = buildConfiguration()
+		logging.Logger.Info("Loading configuration")
+		globalConfiguration = &types.Config{}
+		if err := buildConfiguration(globalConfiguration); err != nil {
+			logging.Logger.Fatalf("Failed to load configuration: %e", err)
+		}
 	}
 
 	return globalConfiguration
 }
 
 // Function to build a new global configuration.
-func buildConfiguration() *types.Config {
-	var conf types.Config
+func buildConfiguration(conf *types.Config) error {
 
 	// Generate minimal default configuration.
-	log.Println("Generating default minimal configuration")
-	err := setDefaults(&conf)
+	logging.Logger.Debugf("Generating default minimal configuration")
+	err := setDefaults(conf)
 	if err != nil {
-		log.Fatalf("Failed to generate default configuration: %e", err)
+		return fmt.Errorf("default: %e", err)
 	}
 
 	// Read the configuration from commandline interface.
-	log.Println("Reading configuration from the commandline interface")
-	err = getConfigurationCli(&conf)
+	logging.Logger.Debugf("Reading configuration from the commandline interface")
+	err = getConfigurationCli(conf)
 	if err != nil {
-		log.Fatalf("Failed to read configuration flags: %e", err)
+		return fmt.Errorf("commandline: %e", err)
 	}
 
 	// Read the configuration from environment.
-	log.Println("Reading configuration from the environment")
-	err = getConfigurationEnv(&conf)
+	logging.Logger.Debugf("Reading configuration from the environment")
+	err = getConfigurationEnv(conf)
 	if err != nil {
-		log.Fatalf("Failed to read configuration environment: %e", err)
+		return fmt.Errorf("environment: %e", err)
 	}
 
 	// Read configuration from file.
-	log.Println("Reading configuration from the configuration file")
-	err = getConfigurationFile(conf.ConfigFile, &conf)
+	logging.Logger.Debugf("Reading configuration from the configuration file")
+	err = getConfigurationFile(conf.ConfigFile, conf)
 	if err != nil {
-		log.Fatalf("Failed to read configuration file: %e", err)
+		return fmt.Errorf("file: %e", err)
 	}
 
 	// Fill empty fields with default values after configuration expansion.
-	log.Println("Filling empty configuration fields with default values")
-	err = setDefaults(&conf)
+	logging.Logger.Debugf("Filling empty configuration fields with default values")
+	err = setDefaults(conf)
 	if err != nil {
-		log.Fatalf("Failed to fill defaults in configuration: %e", err)
+		return fmt.Errorf("post-process: %e", err)
 	}
 
 	// Process configuration.
-	updateNames(&conf)
+	updateNames(conf)
 
 	// Validate post-processed configuration.
 	err = validateConfiguration(conf)
 	if err != nil {
-		log.Fatalf("Invalid configuration: %e", err)
+		return fmt.Errorf("Invalid configuration: %e", err)
 	}
 
-	return &conf
+	return nil
 }
 
 // Function to update names of mapped structures in the configuration.
@@ -90,6 +93,7 @@ func updateNames(conf *types.Config) {
 	}
 }
 
-func validateConfiguration(conf types.Config) error {
+// Function to validate the parsed configuration.
+func validateConfiguration(conf *types.Config) error {
 	return nil
 }

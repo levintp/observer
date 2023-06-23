@@ -2,9 +2,10 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 	"strconv"
+
+	"github.com/levintp/observer/internal/logging"
 )
 
 // Function to set the default values of all fields in a structure, recursively.
@@ -19,7 +20,7 @@ func setDefaults(obj any) error {
 	objType := objValue.Type()
 	objKind := objType.Kind()
 
-	log.Printf("Enumerating object type=%v kind=%v", objType.Name(), objKind)
+	logging.Logger.Tracef("Enumerating object type=%v kind=%v", objType.Name(), objKind)
 
 	switch objKind {
 	case reflect.Struct:
@@ -28,7 +29,7 @@ func setDefaults(obj any) error {
 			fieldType := objType.Field(i)
 			fieldKind := fieldType.Type.Kind()
 
-			log.Printf("Processing field=%v type=%v", fieldType.Name, fieldKind)
+			logging.Logger.Tracef("Processing field=%v type=%v", fieldType.Name, fieldKind)
 
 			// If the current field has a `default` tag, use it as default value.
 			if defaultVal := fieldType.Tag.Get("default"); defaultVal != "" {
@@ -40,11 +41,11 @@ func setDefaults(obj any) error {
 				}
 			}
 			if fieldKind == reflect.Struct || fieldKind == reflect.Map {
-				log.Printf("Descending into field=%v kind=%v", fieldType.Name, fieldKind)
+				logging.Logger.Tracef("Descending into field=%v kind=%v", fieldType.Name, fieldKind)
 				if err := setDefaults(fieldValue.Addr().Interface()); err != nil {
 					return err
 				}
-				log.Printf("Ascending from field=%v", fieldType.Name)
+				logging.Logger.Tracef("Ascending from field=%v", fieldType.Name)
 			}
 		}
 	case reflect.Map:
@@ -61,20 +62,19 @@ func setDefaults(obj any) error {
 	return nil
 }
 
-func setField(field reflect.Value, defaultVal string) error {
-
+// Function to set a field's value.
+func setField(field reflect.Value, value string) error {
 	if !field.CanSet() {
 		return fmt.Errorf("Failed to set field value\n")
 	}
 
 	switch field.Kind() {
-
 	case reflect.Int:
-		if val, err := strconv.ParseInt(defaultVal, 10, 64); err == nil {
+		if val, err := strconv.ParseInt(value, 10, 64); err == nil {
 			field.Set(reflect.ValueOf(int(val)).Convert(field.Type()))
 		}
 	case reflect.String:
-		field.Set(reflect.ValueOf(defaultVal).Convert(field.Type()))
+		field.Set(reflect.ValueOf(value).Convert(field.Type()))
 	}
 
 	return nil
