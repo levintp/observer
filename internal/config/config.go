@@ -28,37 +28,28 @@ func Get() *types.Config {
 func buildConfiguration(conf *types.Config) error {
 
 	// Generate minimal default configuration.
-	logging.Logger.Debugf("Generating default minimal configuration")
-	err := setDefaults(conf)
-	if err != nil {
+	if err := setDefaults(conf); err != nil {
 		return fmt.Errorf("default: %e", err)
 	}
 
 	// Read the configuration from commandline interface.
-	logging.Logger.Debugf("Reading configuration from the commandline interface")
-	err = getConfigurationCli(conf)
-	if err != nil {
+	if err := getConfigurationCli(conf); err != nil {
 		return fmt.Errorf("commandline: %e", err)
 	}
 
 	// Read the configuration from environment.
-	logging.Logger.Debugf("Reading configuration from the environment")
-	err = getConfigurationEnv(conf)
-	if err != nil {
+	if err := getConfigurationEnv(conf); err != nil {
 		return fmt.Errorf("environment: %e", err)
 	}
 
 	// Read configuration from file.
-	logging.Logger.Debugf("Reading configuration from the configuration file")
-	err = getConfigurationFile(conf.ConfigFile, conf)
+	err := getConfigurationFile(conf.ConfigFile, conf)
 	if err != nil {
 		return fmt.Errorf("file: %e", err)
 	}
 
 	// Fill empty fields with default values after configuration expansion.
-	logging.Logger.Debugf("Filling empty configuration fields with default values")
-	err = setDefaults(conf)
-	if err != nil {
+	if err := setDefaults(conf); err != nil {
 		return fmt.Errorf("post-process: %e", err)
 	}
 
@@ -66,9 +57,8 @@ func buildConfiguration(conf *types.Config) error {
 	updateNames(conf)
 
 	// Validate post-processed configuration.
-	err = validateConfiguration(conf)
-	if err != nil {
-		return fmt.Errorf("Invalid configuration: %e", err)
+	if err := validateConfiguration(conf); err != nil {
+		return fmt.Errorf("invalid configuration: %e", err)
 	}
 
 	return nil
