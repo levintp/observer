@@ -15,6 +15,9 @@ import (
 var globalConfiguration *types.Config // Global singleton configuration.
 
 const environmentPrefix = "OBSERVER_"
+const configurationFileEnv = environmentPrefix + "CONFIG_FILE"
+const configurationFileFlag = "config-file"
+const defaultConfigurationFile = "/etc/observer/observer.yaml"
 
 // Function to get the configuration.
 func Get() *types.Config {
@@ -113,13 +116,13 @@ func readConfigurationFile(filename string, conf *types.Config) error {
 
 // Function to get the configuration filename from either environment or flags, or default.
 func getConfigurationFile() string {
-	filename := "/etc/observer/observer.yaml"
+	filename := defaultConfigurationFile
 
-	if environFilename := os.Getenv("OBSERVER_CONFIG_FILE"); environFilename != "" {
+	if environFilename := os.Getenv(configurationFileEnv); environFilename != "" {
 		filename = environFilename
 	}
 
-	if flagFilename := common.GetFlag("config-file"); flagFilename != "" {
+	if flagFilename := common.GetFlag(configurationFileFlag); flagFilename != "" {
 		filename = flagFilename
 	}
 
