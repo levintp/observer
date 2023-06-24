@@ -75,9 +75,10 @@ type ThresholdSpec struct {
 // The `ModuleSpec` type is a structure that defines the specification of a
 // module.
 type ModuleSpec struct {
-	Name      string                 `yaml:"name"`                // Name of the module.
-	Timeout   int                    `yaml:"timeout" default:"1"` // Maximum execution time.
-	Arguments map[string]interface{} `yaml:"arguments,omitempty"` // Arguments to pass to the module.
+	Name      string                 `yaml:"name"`                    // Name of the module plugin.
+	Function  string                 `yaml:"function" default:"exec"` // Symbol name of the function to run within the module.
+	Timeout   int                    `yaml:"timeout" default:"1"`     // Maximum execution time.
+	Arguments map[string]interface{} `yaml:"arguments,omitempty"`     // Arguments to pass to the module.
 }
 
 // The `NodeSpec` type is a structure that definse a monitored node in the
