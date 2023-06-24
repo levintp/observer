@@ -14,6 +14,8 @@ import (
 
 var globalConfiguration *types.Config // Global singleton configuration.
 
+const environmentPrefix = "OBSERVER_"
+
 // Function to get the configuration.
 func Get() *types.Config {
 	if globalConfiguration == nil {
@@ -41,7 +43,7 @@ func buildConfiguration(conf *types.Config) error {
 	}
 
 	// Override configuration with higher priority values from enviroment.
-	if err := common.SetEnvironment(conf, "OBSERVER_"); err != nil {
+	if err := common.SetEnvironment(conf, environmentPrefix); err != nil {
 		return fmt.Errorf("environment: %v", err)
 	}
 
