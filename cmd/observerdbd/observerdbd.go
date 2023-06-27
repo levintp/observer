@@ -1,15 +1,13 @@
 package main
 
 import (
-	"github.com/levintp/observer/internal/common"
 	"github.com/levintp/observer/internal/config"
-	log "github.com/sirupsen/logrus"
+	"github.com/levintp/observer/internal/log"
 )
 
 func init() {
-	common.InitLogger()
 	configuration := config.Get()
-	if err := common.ConfigureLogger(configuration.DatabaseSpec.LogFile, configuration.DatabaseSpec.LogLevel); err != nil {
+	if err := log.ConfigureLogger(configuration.DatabaseSpec.LogFile, configuration.DatabaseSpec.LogLevel); err != nil {
 		log.Fatalf("Failed to configure logger: %v", err)
 	}
 }

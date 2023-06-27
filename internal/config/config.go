@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/levintp/observer/internal/common"
+	"github.com/levintp/observer/internal/log"
 	"github.com/levintp/observer/internal/types"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 

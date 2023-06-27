@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strconv"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/levintp/observer/internal/log"
 )
 
 // Function to set the default values of all fields in a structure, recursively.
@@ -80,9 +80,9 @@ func SetEnvironment(obj any, prefix string) error {
 			if environVar := fieldType.Tag.Get("env"); environVar != "" {
 				environVar = fmt.Sprintf("%s%s", prefix, environVar)
 				// If the environment variable exists, set the field to it.
-				log.Tracef("looking for environment variable %s", environVar)
+				log.Debugf("looking for environment variable %s", environVar)
 				if environValue := os.Getenv(environVar); environValue != "" {
-					log.Tracef("found environment variable: %s=%s", environVar, environValue)
+					log.Debugf("found environment variable: %s=%s", environVar, environValue)
 					if err := setField(fieldValue, environValue); err != nil {
 						return err
 					}
@@ -120,9 +120,9 @@ func SetFlags(obj any) error {
 			// If the current field has a `flag` tag, use it as the flag name.
 			if flagName := fieldType.Tag.Get("flag"); flagName != "" {
 				// If the flag is present, set the field to it.
-				log.Tracef("looking for flag %s", flagName)
+				log.Debugf("looking for flag %s", flagName)
 				if flagValue := GetFlag(flagName); flagValue != "" {
-					log.Tracef("found flag: %s=%s", flagName, flagValue)
+					log.Debugf("found flag: %s=%s", flagName, flagValue)
 					if err := setField(fieldValue, flagValue); err != nil {
 						return err
 					}

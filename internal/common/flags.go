@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/levintp/observer/internal/log"
 )
 
 // Function to get the value of a commandline flag by its name.
@@ -13,7 +13,7 @@ func GetFlag(flagName string) string {
 	argv := os.Args[1:]
 	argc := len(argv)
 
-	log.Tracef("Searching for %s in %v", flagName, argv)
+	log.Debugf("Searching for %s in %v", flagName, argv)
 
 	for i := 0; i < argc; i++ {
 		arg := argv[i]
@@ -35,7 +35,7 @@ func GetFlag(flagName string) string {
 			}
 
 			if value != "" {
-				log.Tracef("foung flag %s=%s", flagName, value)
+				log.Debugf("foung flag %s=%s", flagName, value)
 				return value
 			}
 		}
