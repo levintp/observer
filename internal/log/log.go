@@ -57,6 +57,8 @@ func init() {
 
 // Function to configure the logger.
 func ConfigureLogger(logFile string, logLevel string) error {
+	Infow("Configuring logging facility", "log_file", logFile, "level", logLevel)
+
 	conf := zap.NewProductionConfig()
 	conf.Encoding = "console"
 
