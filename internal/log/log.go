@@ -98,8 +98,8 @@ func generateLoggerConfiguration() zap.Config {
 }
 
 // Function to build a logger from a logger configuration and set it as global logger.
-func buildLogger(conf zap.Config) error {
-	logger, _ := conf.Build()
+func buildLogger(cfg zap.Config) error {
+	logger, _ := cfg.Build()
 
 	sugar = logger.Sugar()
 	setExportedFunctions()

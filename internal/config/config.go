@@ -12,7 +12,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var globalConfiguration *types.Config // Global singleton configuration.
+var cfg *types.Config // Global singleton configuration.
 
 const environmentPrefix = "OBSERVER_"
 const configurationFileEnv = environmentPrefix + "CONFIG_FILE"
@@ -21,50 +21,50 @@ const defaultConfigurationFile = "/etc/observer/observer.yaml"
 
 // Function to get the configuration.
 func Get() *types.Config {
-	if globalConfiguration == nil {
+	if cfg == nil {
 		log.Info("Loading configuration")
-		globalConfiguration = &types.Config{}
-		if err := buildConfiguration(globalConfiguration); err != nil {
+		cfg = &types.Config{}
+		if err := buildConfiguration(cfg); err != nil {
 			log.Fatalf("Failed to load configuration: %v", err)
 		}
 	}
 
-	return globalConfiguration
+	return cfg
 }
 
 // Function to build a new global configuration.
-func buildConfiguration(conf *types.Config) error {
+func buildConfiguration(cfg *types.Config) error {
 	// Generate minimal default configuration.
-	if err := meta.SetDefaults(conf); err != nil {
+	if err := meta.SetDefaults(cfg); err != nil {
 		return fmt.Errorf("default: %v", err)
 	}
 
 	// Read configuration from file.
-	err := readConfigurationFile(getConfigurationFile(), conf)
+	err := readConfigurationFile(getConfigurationFile(), cfg)
 	if err != nil {
 		return fmt.Errorf("file: %v", err)
 	}
 
 	// Override configuration with higher priority values from enviroment.
-	if err := meta.SetEnvironment(conf, environmentPrefix); err != nil {
+	if err := meta.SetEnvironment(cfg, environmentPrefix); err != nil {
 		return fmt.Errorf("environment: %v", err)
 	}
 
 	// Override configuration with highest priority values from flags.
-	if err := meta.SetFlags(conf); err != nil {
+	if err := meta.SetFlags(cfg); err != nil {
 		return fmt.Errorf("commandline: %v", err)
 	}
 
 	// Fill empty fields with default values after configuration expansion.
-	if err := meta.SetDefaults(conf); err != nil {
+	if err := meta.SetDefaults(cfg); err != nil {
 		return fmt.Errorf("post-process: %v", err)
 	}
 
 	// Process configuration.
-	updateNames(conf)
+	updateNames(cfg)
 
 	// Validate post-processed configuration.
-	if err := validateConfiguration(conf); err != nil {
+	if err := validateConfiguration(cfg); err != nil {
 		return fmt.Errorf("invalid configuration: %v", err)
 	}
 
@@ -72,7 +72,7 @@ func buildConfiguration(conf *types.Config) error {
 }
 
 // Function to get the configuration from the configuration file.
-func readConfigurationFile(filename string, conf *types.Config) error {
+func readConfigurationFile(filename string, cfg *types.Config) error {
 	log.Debugf("Reading configuration from %s", filename)
 
 	// Read the configuration file.
@@ -82,7 +82,7 @@ func readConfigurationFile(filename string, conf *types.Config) error {
 	}
 
 	// Parse the configuration file.
-	err = yaml.Unmarshal(content, conf)
+	err = yaml.Unmarshal(content, cfg)
 	if err != nil {
 		return err
 	}
@@ -106,9 +106,9 @@ func getConfigurationFile() string {
 }
 
 // Function to update names of mapped structures in the configuration.
-func updateNames(conf *types.Config) {
+func updateNames(cfg *types.Config) {
 	// Iterate over stream configuration and update mapped names.
-	for streamName, stream := range conf.Streams {
+	for streamName, stream := range cfg.Streams {
 		stream.Name = streamName
 		for metricName, metric := range stream.Metrics {
 			metric.Name = metricName
@@ -119,7 +119,7 @@ func updateNames(conf *types.Config) {
 	}
 
 	// Iterate over node configuration an update mapped names.
-	for nodeName, node := range conf.Nodes {
+	for nodeName, node := range cfg.Nodes {
 		node.Name = nodeName
 	}
 }
