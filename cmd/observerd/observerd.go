@@ -6,15 +6,15 @@ import (
 )
 
 func init() {
-	configuration := config.Get()
-	if err := log.ConfigureLogger(configuration.AgentSpec.LogFile, configuration.AgentSpec.LogLevel); err != nil {
+	log.Info("Observer Agent daemon initializing")
+
+	cfg := config.Get()
+
+	if err := log.ConfigureLogger(cfg.AgentSpec.LogFile, cfg.AgentSpec.LogLevel); err != nil {
 		log.Fatalf("Failed to configure logger: %v", err)
 	}
 }
 
 func main() {
 	log.Info("Observer Agent daemon started")
-
-	configuration := config.Get()
-	log.Infof("Loaded configuration:\n%v", configuration)
 }
