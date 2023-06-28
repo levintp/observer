@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/levintp/observer/internal/common"
 	"github.com/levintp/observer/internal/log"
+	"github.com/levintp/observer/internal/meta"
 	"github.com/levintp/observer/internal/types"
 	"gopkg.in/yaml.v3"
 )
@@ -35,7 +35,7 @@ func Get() *types.Config {
 // Function to build a new global configuration.
 func buildConfiguration(conf *types.Config) error {
 	// Generate minimal default configuration.
-	if err := common.SetDefaults(conf); err != nil {
+	if err := meta.SetDefaults(conf); err != nil {
 		return fmt.Errorf("default: %v", err)
 	}
 
@@ -46,17 +46,17 @@ func buildConfiguration(conf *types.Config) error {
 	}
 
 	// Override configuration with higher priority values from enviroment.
-	if err := common.SetEnvironment(conf, environmentPrefix); err != nil {
+	if err := meta.SetEnvironment(conf, environmentPrefix); err != nil {
 		return fmt.Errorf("environment: %v", err)
 	}
 
 	// Override configuration with highest priority values from flags.
-	if err := common.SetFlags(conf); err != nil {
+	if err := meta.SetFlags(conf); err != nil {
 		return fmt.Errorf("commandline: %v", err)
 	}
 
 	// Fill empty fields with default values after configuration expansion.
-	if err := common.SetDefaults(conf); err != nil {
+	if err := meta.SetDefaults(conf); err != nil {
 		return fmt.Errorf("post-process: %v", err)
 	}
 
@@ -98,7 +98,7 @@ func getConfigurationFile() string {
 		filename = environFilename
 	}
 
-	if flagFilename := common.GetFlag(configurationFileFlag); flagFilename != "" {
+	if flagFilename := meta.GetFlag(configurationFileFlag); flagFilename != "" {
 		filename = flagFilename
 	}
 

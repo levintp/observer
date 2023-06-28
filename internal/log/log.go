@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 // Global non-exported sugar logger.
@@ -47,10 +48,7 @@ var Debugw func(msg string, keysAndValues ...interface{})
 
 func init() {
 	// Initialize the sugared logger.
-	conf := zap.NewProductionConfig()
-	conf.Encoding = "console"
-
-	if err := buildLogger(conf); err != nil {
+	if err := buildLogger(generateLoggerConfiguration()); err != nil {
 		panic(err)
 	}
 }
@@ -59,34 +57,44 @@ func init() {
 func ConfigureLogger(logFile string, logLevel string) error {
 	Infow("Configuring logging facility", "log_file", logFile, "level", logLevel)
 
-	conf := zap.NewProductionConfig()
-	conf.Encoding = "console"
+	cfg := generateLoggerConfiguration()
 
 	// Configure file output.
-	conf.OutputPaths = []string{logFile}
+	cfg.OutputPaths = []string{logFile}
 
 	// Configure log level.
 	switch logLevel {
 	case "panic":
-		conf.Level.SetLevel(zap.PanicLevel)
+		cfg.Level.SetLevel(zap.PanicLevel)
 	case "fatal":
-		conf.Level.SetLevel(zap.FatalLevel)
+		cfg.Level.SetLevel(zap.FatalLevel)
 	case "error":
-		conf.Level.SetLevel(zap.ErrorLevel)
+		cfg.Level.SetLevel(zap.ErrorLevel)
 	case "warn":
-		conf.Level.SetLevel(zap.WarnLevel)
+		cfg.Level.SetLevel(zap.WarnLevel)
 	case "info":
-		conf.Level.SetLevel(zap.InfoLevel)
+		cfg.Level.SetLevel(zap.InfoLevel)
 	case "debug":
-		conf.Level.SetLevel(zap.DebugLevel)
+		cfg.Level.SetLevel(zap.DebugLevel)
 	default:
 		return fmt.Errorf("invalid log level: %s", logLevel)
 	}
 
 	// Build a logger from the configuration.
-	buildLogger(conf)
+	buildLogger(cfg)
+	defer sugar.Sync()
 
 	return nil
+}
+
+func generateLoggerConfiguration() zap.Config {
+	cfg := zap.NewProductionConfig()
+
+	cfg.DisableStacktrace = true
+	cfg.Encoding = "console"
+	cfg.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+
+	return cfg
 }
 
 // Function to build a logger from a logger configuration and set it as global logger.
