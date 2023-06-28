@@ -37,8 +37,9 @@ type Config struct {
 		LogFile  string `yaml:"log_file" env:"DATABASE_API_FILE" flag:"log-file" default:"/var/log/observer/observerapid.log"` // Output file of the API log.
 		LogLevel string `yaml:"log_level" env:"DATABASE_API_LEVEL" flag:"log-level" default:"info"`                            // Level of the API log.
 	} `yaml:"api"`
-	Streams map[string]*StreamSpec `yaml:"streams"` // List of streams.
-	Nodes   map[string]*NodeSpec   `yaml:"nodes"`   // List of nodes.
+	PluginDir string                 `yaml:"plugin_dir" env:"PLUGIN_DIR" flag:"plugin-dir" default:"/usr/lib/observer/plugins"` // Directory of plugin objects.
+	Streams   map[string]*StreamSpec `yaml:"streams"`                                                                           // List of streams.
+	Nodes     map[string]*NodeSpec   `yaml:"nodes"`                                                                             // List of nodes.
 }
 
 // The `StreamSpec` type is a structure that defines the specification of a
