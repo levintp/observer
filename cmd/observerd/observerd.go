@@ -17,4 +17,13 @@ func init() {
 
 func main() {
 	log.Info("Observer Agent daemon started")
+
+	for _, streamSpec := range config.Get().Streams {
+		log.Infow("Registering stream", "stream", streamSpec.Name)
+		for _, metricSpec := range streamSpec.Metrics {
+			log.Infow("Registering metric",
+				"stream", streamSpec.Name,
+				"metric", metricSpec.Name)
+		}
+	}
 }
