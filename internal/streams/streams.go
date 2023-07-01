@@ -15,6 +15,8 @@ type Stream struct {
 func (stream Stream) ShouldRun() bool {
 	// TODO:
 	//  - compare stream categories with local node categories.
+	//		[note]: implement a `categories` package with category comparison
+	//				functionality.
 	// 	- if no category matches or an error occurred, return false.
 	return false
 }
