@@ -93,6 +93,7 @@ func generateLoggerConfiguration() zap.Config {
 	cfg.DisableStacktrace = true
 	cfg.Encoding = "console"
 	cfg.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	cfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 
 	return cfg
 }
