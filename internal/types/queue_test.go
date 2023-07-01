@@ -1,13 +1,13 @@
-package queue_test
+package types_test
 
 import (
 	"testing"
 
-	"github.com/levintp/observer/internal/queue"
+	"github.com/levintp/observer/internal/types"
 )
 
 func TestPush(t *testing.T) {
-	queue := make(queue.Queue[int], 0)
+	queue := make(types.Queue[int], 0)
 
 	// Push some values into the queue.
 	queue.Push(123)
@@ -26,7 +26,7 @@ func TestPush(t *testing.T) {
 }
 
 func TestPop(t *testing.T) {
-	queue := make(queue.Queue[int], 0)
+	queue := make(types.Queue[int], 0)
 
 	// Assert error is thrown when queue is empty.
 	if _, err := queue.Pop(); err == nil {

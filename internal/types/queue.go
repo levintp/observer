@@ -1,11 +1,11 @@
 // Package to implement a simple and fast FIFO queue.
-package queue
+package types
 
 import (
 	"errors"
 )
 
-type Queue[T comparable] []T
+type Queue[T any] []T
 
 func (queue *Queue[T]) Pop() (T, error) {
 	var top T
