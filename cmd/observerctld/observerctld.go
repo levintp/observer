@@ -7,7 +7,7 @@ import (
 
 func init() {
 	configuration := config.Get()
-	if err := log.ConfigureLogger(configuration.ControllerSpec.LogFile, configuration.ControllerSpec.LogLevel); err != nil {
+	if err := log.ConfigureLogger(configuration.Controller.LogFile, configuration.Controller.LogLevel); err != nil {
 		log.Fatalf("Failed to configure logger: %v", err)
 	}
 }

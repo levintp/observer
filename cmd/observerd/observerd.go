@@ -10,7 +10,7 @@ func init() {
 
 	cfg := config.Get()
 
-	if err := log.ConfigureLogger(cfg.AgentSpec.LogFile, cfg.AgentSpec.LogLevel); err != nil {
+	if err := log.ConfigureLogger(cfg.Agent.LogFile, cfg.Agent.LogLevel); err != nil {
 		log.Fatalf("Failed to configure logger: %v", err)
 	}
 }
