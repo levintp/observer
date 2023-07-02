@@ -1,7 +1,10 @@
 package main
 
 import (
+	"time"
+
 	"github.com/levintp/observer/internal/config"
+	"github.com/levintp/observer/internal/data_stream"
 	"github.com/levintp/observer/internal/log"
 )
 
@@ -18,12 +21,22 @@ func init() {
 func main() {
 	log.Info("Observer Agent daemon started")
 
+	log.Info("Building streams")
+	streams := make([]data_stream.DataStream, 0)
 	for _, streamSpec := range config.Get().Streams {
-		log.Infow("Registering stream", "stream", streamSpec.Name)
-		for _, metricSpec := range streamSpec.Metrics {
-			log.Infow("Registering metric",
-				"stream", streamSpec.Name,
-				"metric", metricSpec.Name)
+		stream := data_stream.New(streamSpec)
+		if stream.ShouldRun() {
+			log.Debugw("Registering stream", "stream", streamSpec.Name)
+			streams = append(streams, stream)
+		} else {
+			log.Debugw("Skipping stream", "stream", streamSpec.Name)
 		}
 	}
+
+	log.Info("Starting all registered streams")
+	for _, stream := range streams {
+		stream.Start()
+	}
+
+	time.Sleep(1000000)
 }
