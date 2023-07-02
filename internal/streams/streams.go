@@ -1,24 +1,25 @@
 package streams
 
 import (
+	"github.com/levintp/observer/internal/config"
 	"github.com/levintp/observer/internal/types"
 )
 
 // The `Stream` type is a structure that holds the specification of a stream
 // from the configuration and a target queue for the metrics' samples.
 type Stream struct {
-	Spec    *types.StreamSpec
-	Samples types.Queue[types.Sample]
+	spec    *types.StreamSpec
+	samples types.Queue[types.Sample]
 }
 
 // Function to check if the stream should run on the local node.
 func (stream Stream) ShouldRun() bool {
-	// TODO:
-	//  - compare stream categories with local node categories.
-	//		[note]: implement a `categories` package with category comparison
-	//				functionality.
-	// 	- if no category matches or an error occurred, return false.
-	return false
+	node, err := config.Get().GetLocalNode()
+	if err != nil {
+		return false
+	}
+
+	return node.InCatrgories(stream.spec.Categories)
 }
 
 // Function to start running the stream.
@@ -37,5 +38,5 @@ func (steram Stream) Start() error {
 //
 // Alias for `stream.Samples.Pop()`
 func (stream Stream) Collect() (types.Sample, error) {
-	return stream.Samples.Pop()
+	return stream.samples.Pop()
 }
