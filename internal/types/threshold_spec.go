@@ -9,6 +9,6 @@ type ThresholdSpec struct {
 	Name       string     `yaml:"name"`                  // Name of the threshold.
 	Expr       string     `yaml:"expression"`            // Threshold as a JSONPath expression.
 	Interval   int        `yaml:"interval" default:"60"` // Check interval in seconds.
-	Categories []string   `yaml:"categories,omitempty"`  // Categories to check the threshold on.
+	Categories []Category `yaml:"categories,omitempty"`  // Categories to check the threshold on.
 	Module     ModuleSpec `yaml:"module"`                // Module used when expression is met.
 }

@@ -5,7 +5,7 @@ package types
 type MetricSpec struct {
 	Name       string                    `yaml:"name"`                  // Name of the metric.
 	Interval   int                       `yaml:"interval" default:"60"` // Collection interval.
-	Categories []string                  `yaml:"categories,omitempty"`  // Categories to collect the metric on.
+	Categories []Category                `yaml:"categories,omitempty"`  // Categories to collect the metric on.
 	Module     ModuleSpec                `yaml:"module"`                // Collection module in seconds.
 	Thresholds map[string]*ThresholdSpec `yaml:"thresholds,omitempty"`  // Thresholds applied to the metric.
 }
