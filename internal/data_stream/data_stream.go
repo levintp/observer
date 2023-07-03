@@ -48,7 +48,8 @@ func (stream DataStream) metricHandler(metric *types.MetricSpec) {
 		log.Errorw("Failed to obtain sampling function",
 			"metric", metric.Name,
 			"module", metric.Module.Plugin,
-			"symbol", metric.Module.Function)
+			"symbol", metric.Module.Function,
+			"error", err.Error())
 		return
 	}
 
@@ -60,7 +61,8 @@ func (stream DataStream) metricHandler(metric *types.MetricSpec) {
 			log.Errorw("Failed to run sampling function",
 				"metric", metric.Name,
 				"module", metric.Module.Plugin,
-				"symbol", metric.Module.Function)
+				"symbol", metric.Module.Function,
+				"error", err.Error())
 			return
 		}
 
