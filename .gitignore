@@ -1,3 +1,5 @@
-# Bazel build scripts
-BUILD
-*.bzl
+# Bazel outputs
+bazel-bin/
+bazel-observer/
+bazel-out/
+bazel-testlogs/
