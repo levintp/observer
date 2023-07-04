@@ -1,5 +1,5 @@
 # Bazel outputs
-bazel-bin/
-bazel-observer/
-bazel-out/
-bazel-testlogs/
+bazel-bin
+bazel-observer
+bazel-out
+bazel-testlogs
