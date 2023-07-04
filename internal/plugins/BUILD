@@ -4,9 +4,9 @@ go_library(
     name = "plugins",
     srcs = ["plugins.go"],
     importpath = "github.com/levintp/observer/internal/plugins",
-    visibility = ["//observer:__subpackages__"],
+    visibility = ["//:__subpackages__"],
     deps = [
-        "//observer/internal/config",
-        "//observer/internal/types",
+        "//internal/config",
+        "//internal/types",
     ],
 )

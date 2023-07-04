@@ -6,8 +6,8 @@ go_library(
     importpath = "github.com/levintp/observer/cmd/observerctld",
     visibility = ["//visibility:private"],
     deps = [
-        "//observer/internal/config",
-        "//observer/internal/log",
+        "//internal/config",
+        "//internal/log",
     ],
 )
 

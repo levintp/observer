@@ -19,7 +19,7 @@ go_library(
         "threshold_spec.go",
     ],
     importpath = "github.com/levintp/observer/internal/types",
-    visibility = ["//observer:__subpackages__"],
+    visibility = ["//:__subpackages__"],
 )
 
 go_test(

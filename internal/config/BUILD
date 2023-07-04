@@ -7,11 +7,11 @@ go_library(
         "config.go",
     ],
     importpath = "github.com/levintp/observer/internal/config",
-    visibility = ["//observer:__subpackages__"],
+    visibility = ["//:__subpackages__"],
     deps = [
-        "//observer/internal/log",
-        "//observer/internal/meta",
-        "//observer/internal/types",
+        "//internal/log",
+        "//internal/meta",
+        "//internal/types",
         "@in_gopkg_yaml_v3//:yaml_v3",
     ],
 )

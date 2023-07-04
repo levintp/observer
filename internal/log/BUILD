@@ -4,7 +4,7 @@ go_library(
     name = "log",
     srcs = ["log.go"],
     importpath = "github.com/levintp/observer/internal/log",
-    visibility = ["//observer:__subpackages__"],
+    visibility = ["//:__subpackages__"],
     deps = [
         "@org_uber_go_zap//:zap",
         "@org_uber_go_zap//zapcore",
