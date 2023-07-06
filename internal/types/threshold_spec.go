@@ -12,3 +12,7 @@ type ThresholdSpec struct {
 	Categories []Category `yaml:"categories,omitempty"`  // Categories to check the threshold on.
 	Module     ModuleSpec `yaml:"module"`                // Module used when expression is met.
 }
+
+// This argument name is reserved for passing the sample that triggers a
+// threshold to its module function as context.
+const SampleArgument = "SAMPLE_ARGUMENT"
